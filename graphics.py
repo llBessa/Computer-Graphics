@@ -114,28 +114,29 @@ def linhaBresenham(ponto1 : Ponto, ponto2 : Ponto, cor, superficie, escala):
 
 # algoritmos de rasterização de circunferencias
 
-def parametrica(raio, centro : Ponto, cor, superficie):
+def parametrica(raio, centro : Ponto, cor, superficie, escala):
     x = centro.x + raio
     y = centro.y
     for t in range(0, 361):
-        superficie.set_at((round(x), round(y)), cor)
+        # superficie.set_at((round(x), round(y)), cor)
+        pygame.draw.rect(superficie, cor, pygame.Rect(round(x) * escala, round(y) * escala, escala, escala), 1)
         x = centro.x + raio*math.cos((t*math.pi)/180)
         y = centro.y + raio*math.sin((t*math.pi)/180)
 
-def circunferenciaBresenham(raio, centro : Ponto, cor, superficie):
+def circunferenciaBresenham(raio, centro : Ponto, cor, superficie, escala):
     x = 0
     y = raio
     parametro = 1 - raio
 
     while(x <= y):
-        superficie.set_at((centro.x + x, centro.y + y), cor)
-        superficie.set_at((centro.x - x, centro.y + y), cor)
-        superficie.set_at((centro.x + x, centro.y - y), cor)
-        superficie.set_at((centro.x - x, centro.y - y), cor)
-        superficie.set_at((centro.x + y, centro.y + x), cor)
-        superficie.set_at((centro.x - y, centro.y + x), cor)
-        superficie.set_at((centro.x + y, centro.y - x), cor)
-        superficie.set_at((centro.x - y, centro.y - x), cor)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + x) * escala, (centro.y + y) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - x) * escala, (centro.y + y) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + x) * escala, (centro.y - y) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - x) * escala, (centro.y - y) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + y) * escala, (centro.y + x) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - y) * escala, (centro.y + x) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + y) * escala, (centro.y - x) * escala, escala, escala), 1)
+        pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - y) * escala, (centro.y - x) * escala, escala, escala), 1)
 
         if(parametro < 0):
             parametro += 2*x + 3

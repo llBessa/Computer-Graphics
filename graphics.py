@@ -7,20 +7,20 @@ class Ponto:
 
 # algoritmos de rasterização de linhas
 
-def analitico(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
+def analitico(ponto1 : Ponto, ponto2 : Ponto, cor, superficie, escala):
     # swap das variaveis caso x1 > x2 e/ou y1 > y2
     if(ponto1.x > ponto2.x): ponto1.x , ponto2.x = ponto2.x, ponto1.x
     if(ponto1.y > ponto2.y): ponto1.y , ponto2.y = ponto2.y, ponto1.y
     
     if(ponto1.x == ponto2.x):
-        for y in range(ponto1.y,ponto2.y):
-            superficie.set_at((ponto1.x, y),cor)
+        for y in range(ponto1.y,ponto2.y + 1):
+            pygame.draw.rect(superficie, cor, pygame.Rect(ponto1.x * escala, y * escala, escala, escala), 1)
     else:
         m = (ponto2.y - ponto1.y)/(ponto2.x - ponto1.x)
         b = ponto2.y - m*ponto2.x
-        for x in range(ponto1.x, ponto2.x):
+        for x in range(ponto1.x, ponto2.x + 1):
             y = m*x + b
-            superficie.set_at((x,round(y)), cor)
+            pygame.draw.rect(superficie, cor, pygame.Rect(x * escala, round(y) * escala, escala, escala), 1)
 
 def dda(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
     # swap das variaveis caso x1 > x2 e/ou y1 > y2
@@ -45,7 +45,7 @@ def dda(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
             superficie.set_at((round(x),y), cor)
             x += incremento
 
-def dda2(ponto1 : Ponto,ponto2 : Ponto, cor, superficie):
+def dda2(ponto1 : Ponto,ponto2 : Ponto, cor, superficie, escala):
     dy = ponto2.y - ponto1.y
     dx = ponto2.x - ponto1.x
 
@@ -58,11 +58,11 @@ def dda2(ponto1 : Ponto,ponto2 : Ponto, cor, superficie):
     incrementoY = dy / delta
 
     for i in range(delta):
-        superficie.set_at((round(x),round(y)), cor)
+        pygame.draw.rect(superficie, cor, pygame.Rect(round(x) * escala, round(y) * escala, escala, escala), 1)
         x += incrementoX
         y += incrementoY
 
-def linhaBresenham(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
+def linhaBresenham(ponto1 : Ponto, ponto2 : Ponto, cor, superficie, escala):
     if(ponto1.x > ponto2.x): ponto1, ponto2 = ponto2, ponto1
 
     fazTroca = False
@@ -87,9 +87,9 @@ def linhaBresenham(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
         parametro = 2*dy - dx
         for x in range(ponto1.x, ponto2.x):
             if(fazTroca):
-                superficie.set_at((y,-x), cor)
+                pygame.draw.rect(superficie, cor, pygame.Rect(y * escala, -x * escala, escala, escala), 1)
             else:
-                superficie.set_at((y,x), cor)
+                pygame.draw.rect(superficie, cor, pygame.Rect(y * escala, x * escala, escala, escala), 1)
 
             if(parametro < 0):
                 parametro += 2*dy
@@ -102,9 +102,9 @@ def linhaBresenham(ponto1 : Ponto, ponto2 : Ponto, cor, superficie):
         parametro = 2*dy - dx
         for x in range(ponto1.x, ponto2.x):
             if(fazTroca):
-                superficie.set_at((x,-y), cor)
+                pygame.draw.rect(superficie, cor, pygame.Rect(x * escala, -y * escala, escala, escala), 1)
             else:
-                superficie.set_at((x,y), cor)
+                pygame.draw.rect(superficie, cor, pygame.Rect(x * escala, y * escala, escala, escala), 1)
 
             if(parametro < 0):
                 parametro += 2*dy
@@ -186,3 +186,4 @@ def keepWindowAlive():
             # se o evento de quit for identificado a condição de parada é setada
             if event.type == pygame.QUIT:
                 running = False
+                pygame.display.quit()

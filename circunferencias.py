@@ -1,5 +1,7 @@
 import pygame
-from graphics import Ponto, keepWindowAlive, parametrica, circunferenciaBresenham
+from Renderizador import Renderizador
+from Ponto import Ponto
+from Terminal import Terminal
 
 print("RASTERIZAÇÃO DE LINHAS\n\n")
 print("qual algoritmo deseja utilizar ?\n")
@@ -26,7 +28,9 @@ centro = Ponto(posicaoX, posicaoY)
 # cor vermelha
 cor = (255, 0, 0)
 
-algoritmos = [parametrica, circunferenciaBresenham]
+renderizador = Renderizador(superficie, cor, escala)
+
+algoritmos = [renderizador.parametrica, renderizador.circunferenciaBresenham]
 executar = algoritmos[escolha - 1]
 executar(raio, centro, cor, superficie, escala)
 
@@ -34,4 +38,4 @@ pygame.display.set_caption("Rasterização de circunferencias")
 
 # renderiza a imagem
 pygame.display.flip()
-keepWindowAlive()
+Terminal.mantem_janela()

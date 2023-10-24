@@ -1,7 +1,9 @@
 import sys
 import pygame
 import os
-from graphics import analitico, keepWindowAlive, linhaBresenham, dda2, Ponto
+from Ponto import Ponto
+from Renderizador import Renderizador
+from Terminal import Terminal
 
 def interacao_escolha_algoritmo():
     print("RASTERIZAÇÃO DE LINHAS\n\n")
@@ -28,7 +30,7 @@ def interacao_escolha_algoritmo():
 cor = (255, 0, 0)
 
 # escala utilizada para os pixels
-escala = 5
+escala = 10
 
 # inicia o pygame
 pygame.init()
@@ -38,15 +40,16 @@ while True:
     escolha, ponto1, ponto2 = interacao_escolha_algoritmo()
 
     try:
-        algoritmos = [analitico, dda2, linhaBresenham]
-        executar = algoritmos[escolha - 1]
-
         # cria uma janela com a resolução especificada
         superficie = pygame.display.set_mode((500, 500))
+        renderizador = Renderizador(superficie, cor, escala)
 
-        executar(ponto1, ponto2, cor, superficie, escala)
+        algoritmos = [renderizador.analitico, renderizador.dda2, renderizador.linhaBresenham]
+        executar = algoritmos[escolha - 1]
+
+        executar(ponto1, ponto2)
         pygame.display.flip()
-        keepWindowAlive()
+        Terminal.mantem_janela()
     except:
         os.system("cls")
         print("ocorreu um erro ao executar algoritmo")

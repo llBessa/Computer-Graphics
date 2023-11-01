@@ -16,6 +16,13 @@ class Renderizador:
         x = x * self.escala + self.largura_tela/2
 
         pygame.draw.rect(self.superficie, self.cor, pygame.Rect(x, y , self.escala, self.escala), 1)
+    
+    def pega_pixel(self, x, y):
+        y = self.altura_tela/2 - (y + 1) * self.escala
+        x = x * self.escala + self.largura_tela/2
+
+        return self.superficie.get_at((x, y))
+
 
     def analitico(self, ponto1 : Ponto, ponto2 : Ponto):
         # swap das variaveis caso x1 > x2 e/ou y1 > y2
@@ -157,28 +164,28 @@ class Renderizador:
 
     # algoritmos de preenchimento
 
-    def floodFill(self, x, y, cor):
-        if(self.superficie.get_at((x,y)) == cor):
-            self.pinta_pixel(x,y)
-            self.floodFill(x + 1, y, cor)
-            self.floodFill(x, y + 1, cor)
-            self.floodFill(x - 1, y, cor)
-            self.floodFill(x, y - 1, cor)
+    def floodFill(self, x, y, corFundo):
+        if(self.pega_pixel(x, y) == corFundo):
+            self.pinta_pixel(x, y)
+            self.floodFill(x + 1, y, corFundo)
+            self.floodFill(x, y + 1, corFundo)
+            self.floodFill(x - 1, y, corFundo)
+            self.floodFill(x, y - 1, corFundo)
 
-    def varreduraRetangulo(inicio : Ponto, largura, altura, cor, superficie):
+    def varreduraRetangulo(self, inicio : Ponto, largura, altura):
         maxY = inicio.y + altura + 1
         maxX = inicio.x + largura + 1
         for y in range(inicio.y, maxY):
             for x in range(inicio.x, maxX):
-                superficie.set_at((x, y), cor)
+                self.pinta_pixel(x, y)
 
-    def varreduraCircunferencia(centro: Ponto, raio, cor, superficie):
+    def varreduraCircunferencia(self, centro: Ponto, raio):
         for y in range(centro.y - raio, centro.y + raio):
             x1 = centro.x - math.sqrt(raio**2 - (y - centro.y)**2)
             x2 = centro.x + math.sqrt(raio**2 - (y - centro.y)**2)
 
             for x in range(round(x1), round(x2)):
-                superficie.set_at((x, y), cor)
+                self.pinta_pixel(x, y)
     
 
 

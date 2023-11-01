@@ -1,10 +1,13 @@
 import sys
 import pygame
+from Ponto import Ponto
 from Renderizador import Renderizador
 
 class Terminal:
-    def __init__(self) :
+    def __init__(self):
         pygame.init()
+        self.cor = (255, 0, 0) # vermelho
+        self.corFundo = (0, 0, 0) # preto
 
     def interacao_peenchimento(self):
         print("ALGORITMOS DE PREENCHIMENTO\n\n")
@@ -14,18 +17,11 @@ class Terminal:
         print("[2] FloodFill com Retângulo")
         print("[3] Varredura com Circunferência")
         print("[4] Varredura com Retângulo")
-        self.escolha = int(input())
         print("\n")
 
-        self.escala = int(input("Dgite o valor da escala (int) :"))
+        escolha = int(input())
 
-        # finaliza a execução do programa se a escolha for diferente das opções apresentadas
-        if(self.escolha not in [1, 2, 3, 4]): sys.exit()
-
-        if(self.escolha in [2, 4]):
-            self.largura, self.altura = input("Digite a largura e a altura do retângulo : ").split(" ")
-        else:
-            self.raio = int(input("Digite o raio da circunferência : "))
+        self.executa_algoritmo_preenchimento(escolha)
     
     def configura_janela(self, nome: str, largura: int, altura: int):
         self.superficie = pygame.display.set_mode((largura, altura))
@@ -44,4 +40,43 @@ class Terminal:
     def executa_algoritmo_preenchimento(self, escolha: int):
         match escolha:
             case 1:
-                pass
+                # inputs do algortimo
+                self.escala = int(input("Dgite o valor da escala (int) : "))
+                raio = int(input("Digite o raio da circunferência : "))
+                x, y = input("Digite as coordenadas da semente do floodfill : ").split(" ")
+
+                x = int(x)
+                y = int(y)
+
+                centro = Ponto(0, 0)
+
+                renderizador = Renderizador(self.superficie, self.cor, self.escala)
+                renderizador.circunferenciaBresenham(raio, centro)
+                renderizador.floodFill(x, y, self.corFundo)
+
+                pygame.display.flip()
+                self.mantem_janela()
+            
+            case 2:
+                self.escala = int(input("Dgite o valor da escala (int) : "))
+                inicio_x, inicio_y = input("Digite as coordenadas do inicio do retângulo : ").split(" ")
+                largura, altura = input("Digite a largura e a altura do retângulo : ").split(" ")
+                x, y = input("Digite as coordenadas da semente do floodfill : ").split(" ")
+
+                inicio = Ponto(int(inicio_x), int(inicio_y))
+                x = int(x)
+                y = int(y)
+
+                largura = int(largura)
+                altura = int(altura)
+
+                renderizador = Renderizador(self.superficie, self.cor, self.escala)
+                renderizador.varreduraRetangulo(inicio, largura, altura)
+                renderizador.floodFill(x, y, self.corFundo)
+
+                pygame.display.flip()
+                self.mantem_janela()
+
+            case _:
+                sys.exit()
+                

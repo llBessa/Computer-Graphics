@@ -21,7 +21,7 @@ class Renderizador:
         y = self.altura_tela/2 - (y + 1) * self.escala
         x = x * self.escala + self.largura_tela/2
 
-        return self.superficie.get_at((x, y))
+        return self.superficie.get_at((int(x), int(y)))
 
 
     def analitico(self, ponto1 : Ponto, ponto2 : Ponto):
@@ -102,7 +102,7 @@ class Renderizador:
             y = ponto1.y
 
             parametro = 2*dy - dx
-            for x in range(ponto1.x, ponto2.x):
+            for x in range(ponto1.x, ponto2.x + 1):
                 if(fazTroca):
                     self.pinta_pixel(y, -x)
                 else:
@@ -117,7 +117,7 @@ class Renderizador:
             y = ponto1.y
 
             parametro = 2*dy - dx
-            for x in range(ponto1.x, ponto2.x):
+            for x in range(ponto1.x, ponto2.x + 1):
                 if(fazTroca):
                     self.pinta_pixel(x, -y)
                 else:
@@ -138,6 +138,28 @@ class Renderizador:
             self.pinta_pixel(round(x), round(y))
             x = centro.x + raio*math.cos((t*math.pi)/180)
             y = centro.y + raio*math.sin((t*math.pi)/180)
+    
+    def incremental(self, raio, centro: Ponto):
+        teta = 1/raio
+        cosseno = math.cos(teta*math.pi/180)
+        seno = math.sin(teta*math.pi/180)
+
+        x = raio + centro.x
+        y = centro.y
+
+        while(x >= y):
+            self.pinta_pixel(round(x), round(y))
+            self.pinta_pixel(round(x), round(-y))
+            self.pinta_pixel(round(-x), round(y))
+            self.pinta_pixel(round(-x), round(-y))
+            self.pinta_pixel(round(y), round(x))
+            self.pinta_pixel(round(y), round(-x))
+            self.pinta_pixel(round(-y), round(x))
+            self.pinta_pixel(round(-y), round(-x))
+
+            x = x * cosseno - y * seno
+            y = y * cosseno + x * seno
+
 
     def circunferenciaBresenham(self, raio, centro : Ponto):
         x = 0

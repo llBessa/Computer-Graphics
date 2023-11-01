@@ -32,6 +32,8 @@ cor = (255, 0, 0)
 # escala utilizada para os pixels
 escala = 10
 
+terminal = Terminal()
+
 # inicia o pygame
 pygame.init()
 pygame.display.set_caption("Rasterização de linhas")
@@ -49,7 +51,7 @@ while True:
 
         executar(ponto1, ponto2)
         pygame.display.flip()
-        Terminal.mantem_janela()
+        terminal.mantem_janela()
     except:
         os.system("cls")
         print("ocorreu um erro ao executar algoritmo")

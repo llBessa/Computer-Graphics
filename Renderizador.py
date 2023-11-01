@@ -124,29 +124,28 @@ class Renderizador:
 
     # algoritmos de rasterização de circunferencias
 
-    def parametrica(raio, centro : Ponto, cor, superficie, escala):
+    def parametrica(self, raio, centro : Ponto):
         x = centro.x + raio
         y = centro.y
         for t in range(0, 361):
-            # superficie.set_at((round(x), round(y)), cor)
-            pygame.draw.rect(superficie, cor, pygame.Rect(round(x) * escala, round(y) * escala, escala, escala), 1)
+            self.pinta_pixel(round(x), round(y))
             x = centro.x + raio*math.cos((t*math.pi)/180)
             y = centro.y + raio*math.sin((t*math.pi)/180)
 
-    def circunferenciaBresenham(raio, centro : Ponto, cor, superficie, escala):
+    def circunferenciaBresenham(self, raio, centro : Ponto):
         x = 0
         y = raio
         parametro = 1 - raio
 
         while(x <= y):
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + x) * escala, (centro.y + y) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - x) * escala, (centro.y + y) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + x) * escala, (centro.y - y) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - x) * escala, (centro.y - y) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + y) * escala, (centro.y + x) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - y) * escala, (centro.y + x) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x + y) * escala, (centro.y - x) * escala, escala, escala), 1)
-            pygame.draw.rect(superficie, cor, pygame.Rect((centro.x - y) * escala, (centro.y - x) * escala, escala, escala), 1)
+            self.pinta_pixel(centro.x + x, centro.y + y)
+            self.pinta_pixel(centro.x - x, centro.y + y)
+            self.pinta_pixel(centro.x + x, centro.y - y)
+            self.pinta_pixel(centro.x - x, centro.y - y)
+            self.pinta_pixel(centro.x + y, centro.y + x)
+            self.pinta_pixel(centro.x - y, centro.y + x)
+            self.pinta_pixel(centro.x + y, centro.y - x)
+            self.pinta_pixel(centro.x - y, centro.y - x)
 
             if(parametro < 0):
                 parametro += 2*x + 3
@@ -158,13 +157,13 @@ class Renderizador:
 
     # algoritmos de preenchimento
 
-    def floodFill(x, y, cor, novaCor, superficie):
-        if(superficie.get_at((x,y)) == cor):
-            superficie.set_at((x,y), novaCor)
-            floodFill(x + 1, y, cor, novaCor, superficie)
-            floodFill(x, y + 1, cor, novaCor, superficie)
-            floodFill(x - 1, y, cor, novaCor, superficie)
-            floodFill(x, y - 1, cor, novaCor, superficie)
+    def floodFill(self, x, y, cor):
+        if(self.superficie.get_at((x,y)) == cor):
+            self.pinta_pixel(x,y)
+            self.floodFill(x + 1, y, cor)
+            self.floodFill(x, y + 1, cor)
+            self.floodFill(x - 1, y, cor)
+            self.floodFill(x, y - 1, cor)
 
     def varreduraRetangulo(inicio : Ponto, largura, altura, cor, superficie):
         maxY = inicio.y + altura + 1

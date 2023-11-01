@@ -19,11 +19,9 @@ largura = 500
 altura = 500
 superficie = pygame.display.set_mode((largura, altura))
 
-escala = 1
+escala = 10
 
-posicaoX = 250/escala
-posicaoY = 250/escala
-centro = Ponto(posicaoX, posicaoY)
+centro = Ponto(0, 0)
 
 # cor vermelha
 cor = (255, 0, 0)
@@ -32,7 +30,7 @@ renderizador = Renderizador(superficie, cor, escala)
 
 algoritmos = [renderizador.parametrica, renderizador.circunferenciaBresenham]
 executar = algoritmos[escolha - 1]
-executar(raio, centro, cor, superficie, escala)
+executar(raio, centro)
 
 pygame.display.set_caption("Rasterização de circunferencias")
 

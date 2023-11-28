@@ -1,5 +1,6 @@
 import pygame, math
 from Ponto import Ponto
+import numpy as np
 
 # algoritmos de rasterização de linhas
 
@@ -10,6 +11,7 @@ class Renderizador:
         self.escala = escala
         self.largura_tela = superficie.get_width()
         self.altura_tela = superficie.get_height()
+        self.pontos_controle = []
     
     def pinta_pixel(self, x, y):
         y = self.altura_tela/2 - (y + 1) * self.escala
@@ -22,6 +24,9 @@ class Renderizador:
         x = x * self.escala + self.largura_tela/2
 
         return self.superficie.get_at((int(x), int(y)))
+    
+    def limpa_tela(self):
+        pygame.draw.rect(self.superficie, (0, 0, 0), pygame.Rect(0, 0 , self.largura_tela, self.altura_tela), 0)
 
 
     def analitico(self, ponto1 : Ponto, ponto2 : Ponto):
@@ -208,6 +213,22 @@ class Renderizador:
 
             for x in range(round(x1), round(x2)):
                 self.pinta_pixel(x, y)
+    
+    def curvaBezier(self, quantidade_pontos_curva: int = 100):
+        quantidade_pontos_controle = self.pontos_controle.__len__() - 1
+        print(self.pontos_controle)
+        if(quantidade_pontos_controle >= 1):
+            parametros_curva = np.linspace(0, 1, quantidade_pontos_curva)
+            for parametro in parametros_curva:
+                ponto = Ponto(0, 0)
+
+                for i in range(quantidade_pontos_controle + 1):
+                    ponto.x += math.comb(quantidade_pontos_controle, i) * (parametro ** i) * ((1 - parametro) ** (quantidade_pontos_controle - i)) * self.pontos_controle[i][0]
+                    ponto.y += math.comb(quantidade_pontos_controle, i) * (parametro ** i) * ((1 - parametro) ** (quantidade_pontos_controle - i)) * self.pontos_controle[i][1]
+                
+                self.superficie.set_at((round(ponto.x), round(ponto.y)), self.cor)
+
+
     
 
 

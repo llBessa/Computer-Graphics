@@ -216,7 +216,6 @@ class Renderizador:
     
     def curvaBezier(self, quantidade_pontos_curva: int = 100):
         quantidade_pontos_controle = self.pontos_controle.__len__() - 1
-        print(self.pontos_controle)
         if(quantidade_pontos_controle >= 1):
             parametros_curva = np.linspace(0, 1, quantidade_pontos_curva)
             for parametro in parametros_curva:
@@ -227,6 +226,28 @@ class Renderizador:
                     ponto.y += math.comb(quantidade_pontos_controle, i) * (parametro ** i) * ((1 - parametro) ** (quantidade_pontos_controle - i)) * self.pontos_controle[i][1]
                 
                 self.superficie.set_at((round(ponto.x), round(ponto.y)), self.cor)
+    
+    def ponto_medio(self, ponto1, ponto2):
+        x = (ponto1[0] + ponto2[0])/2
+        y = (ponto1[1] + ponto2[1])/2
+
+        return (x, y)
+
+    # def curvaCasteljau(self, quantidade_pontos_curva):
+    #     tamanho_lista = self.pontos_controle.__len__() - 1
+    #     novos_pontos = self.pontos_controle.copy()
+
+    #     if(tamanho_lista >= 1):
+    #         while len(novos_pontos) < 10:
+
+    #             novos_pontos.append(novos_pontos[0])
+
+    #             for i in range(len(novos_pontos)):
+    #                 novos_pontos.append(self.ponto_medio(novos_pontos[i], novos_pontos[i + 1]))
+                
+    #             novos_pontos.append(novos_pontos[len(novos_pontos) - 1])
+
+    #         print()
 
 
     

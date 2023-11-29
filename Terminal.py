@@ -115,16 +115,33 @@ class Terminal:
             case _:
                 sys.exit()
     
-    def executa_algoritmo_curvas(self, escolha: int):
+    def executa_algoritmo_curvas(self, escolha: int): 
         match escolha:
             case 1:
                 self.configura_janela("Curva de Bezier", 500, 500)
 
                 self.renderizador = Renderizador(self.superficie, self.cor, 1)
-                self.eventos_curva(self.renderizador.curvaBezier)
+                self.controlador_eventos(lambda: self.renderizador.curvaBezier(1000))
+            case 2:
+                self.configura_janela("Curva de Bezier (Casteljau)", 500, 500)
+
+                self.renderizador = Renderizador(self.superficie, self.cor, 1)
+                self.controlador_eventos(lambda: self.renderizador.curvaCasteljau(1000))
             case _:
                 sys.exit()
-        
+    
+    def executa_algortmo_recorte(self):
+        os.system("cls")
+
+        print("ALGORITMO DE RECORTE DE POLIGONOS\n\n")
+        print("Desenhe o poligono e aperte (R) para recortar a figura!")
+
+        self.configura_janela("Recorte de Sutherland",500, 500)
+        self.renderizador = Renderizador(self.superficie, self.cor, 1)
+
+        self.controlador_eventos(lambda: pygame.draw.polygon(self.superficie, self.cor, self.renderizador.pontos_controle, 1), isPolygon=True)
+
+
     def interacao_curvas(self):
         while True:
             os.system("cls") # Limpa a Tela
@@ -141,7 +158,7 @@ class Terminal:
 
             self.executa_algoritmo_curvas(escolha)
     
-    def eventos_curva(self, callback):
+    def controlador_eventos(self, callback, isPolygon = False):
         self.running = True
         ponto_selecionado = None
 
@@ -172,8 +189,14 @@ class Terminal:
             for ponto_controle in self.renderizador.pontos_controle:
                 pygame.draw.circle(self.superficie, (0, 0, 255), ponto_controle, 5)
 
-            # executa o algoritmo
-            callback(1000)
+            if(isPolygon):
+                pygame.draw.rect(self.superficie, self.cor, pygame.Rect(125, 125, 250, 250), 1)
+                
+                if(len(self.renderizador.pontos_controle) > 2):
+                    callback()
+            else:
+                # executa o algoritmo
+                callback()
 
             # atualiza a janela
             pygame.display.flip()

@@ -232,25 +232,93 @@ class Renderizador:
         y = (ponto1[1] + ponto2[1])/2
 
         return (x, y)
+    
+    def calcula_intersecao(self, ponto1, ponto2, lado_recorte: int):
+        if ponto2[0] - ponto1[0] == 0:
+            # Lidar com linha vertical (evitar divisão por zero)
+            x = ponto1[0]
+            match lado_recorte:
+                case 0: # topo
+                    y = self.ymaximo
+                case 1: # direita
+                    y = ponto1[1] + (self.xmaximo - ponto1[0])
+                case 2: # piso
+                    y = self.yminimo
+                case 3: # esquerda
+                    y = ponto1[1] + (self.xminimo - ponto1[0])
+        else:
+            m = (ponto2[1] - ponto1[1]) / (ponto2[0] - ponto1[0])
 
-    # def curvaCasteljau(self, quantidade_pontos_curva):
-    #     tamanho_lista = self.pontos_controle.__len__() - 1
-    #     novos_pontos = self.pontos_controle.copy()
+            match lado_recorte:
+                case 0: # topo
+                    x = ponto1[0] + (self.ymaximo - ponto1[1]) / m
+                    y = self.ymaximo
+                case 1: # direita
+                    y = ponto1[1] + (self.xmaximo - ponto1[0]) * m
+                    x = self.xmaximo
+                case 2: # piso
+                    x = ponto1[0] + (self.yminimo - ponto1[1]) / m
+                    y = self.yminimo
+                case 3: # esquerda
+                    y = ponto1[1] + (self.xminimo - ponto1[0]) * m
+                    x = self.xminimo
 
-    #     if(tamanho_lista >= 1):
-    #         while len(novos_pontos) < 10:
-
-    #             novos_pontos.append(novos_pontos[0])
-
-    #             for i in range(len(novos_pontos)):
-    #                 novos_pontos.append(self.ponto_medio(novos_pontos[i], novos_pontos[i + 1]))
-                
-    #             novos_pontos.append(novos_pontos[len(novos_pontos) - 1])
-
-    #         print()
-
+        return x, y
 
     
+    def verifica_ponto_dentro(self, ponto, lado_recorte):
+        match lado_recorte:
+            case 0: # topo
+                return ponto[1] <= self.ymaximo
+            case 1: # direita
+                return ponto[0] <= self.xmaximo
+            case 2: # piso
+                return ponto[1] >= self.yminimo
+            case 3: # esquerda
+                return ponto[0] >= self.xminimo
+    
+    def recorteSutherlandHogman(self, janela_recorte):
+        # inicializa o array de pontos do poligono
+        poligono_recortado = self.pontos_controle.copy()
+        poligono_recortado.append(self.pontos_controle[0])
+
+        self.xminimo = janela_recorte[0][0]
+        self.xmaximo = janela_recorte[0][0]
+        self.yminimo = janela_recorte[0][1]
+        self.ymaximo = janela_recorte[0][1]
+
+        # Logica para definir os pontos máximos e minimos da janela de recorte
+        for ponto in janela_recorte:
+            if(ponto[0] < self.xminimo): self.xminimo = ponto[0]
+            if(ponto[0] > self.xmaximo): self.xmaximo = ponto[0]
+            if(ponto[1] < self.yminimo): self.yminimo = ponto[1]
+            if(ponto[1] > self.ymaximo): self.ymaximo = ponto[1]
+        
+        for lado_recorte in range(4):
+            novo_poligono = []
+
+            for i in range(len(poligono_recortado) - 1):
+                ponto1_dentro = self.verifica_ponto_dentro(poligono_recortado[i], lado_recorte)
+                ponto2_dentro = self.verifica_ponto_dentro(poligono_recortado[i + 1], lado_recorte)
+                
+                # caso 1
+                if(ponto1_dentro and ponto2_dentro): novo_poligono.append(poligono_recortado[i + 1])
+                # caso 2
+                elif(ponto1_dentro and not ponto2_dentro): novo_poligono.append(self.calcula_intersecao(poligono_recortado[i], poligono_recortado[i + 1], lado_recorte))
+                # no caso 3 nada é feito
+                # caso 4
+                elif(not ponto1_dentro and ponto2_dentro):
+                    novo_poligono.append(self.calcula_intersecao(poligono_recortado[i], poligono_recortado[i + 1], lado_recorte))
+                    novo_poligono.append(poligono_recortado[i + 1])
+                
+            novo_poligono.append(novo_poligono[0])
+            poligono_recortado = novo_poligono.copy()
+        
+        self.pontos_controle = poligono_recortado.copy()
+            
+
+
+
 
 
 # def criaFiguraA(cor, superficie, escala):

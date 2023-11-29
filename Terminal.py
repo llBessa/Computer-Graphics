@@ -139,7 +139,9 @@ class Terminal:
         self.configura_janela("Recorte de Sutherland",500, 500)
         self.renderizador = Renderizador(self.superficie, self.cor, 1)
 
-        self.controlador_eventos(lambda: pygame.draw.polygon(self.superficie, self.cor, self.renderizador.pontos_controle, 1), isPolygon=True)
+        janela_recorte = [(125, 125), (375, 125), (375, 375), (125, 375)]
+
+        self.controlador_eventos(lambda: pygame.draw.polygon(self.superficie, self.cor, self.renderizador.pontos_controle, 1), isPolygon=True, janela_recorte=janela_recorte)
 
 
     def interacao_curvas(self):
@@ -158,7 +160,7 @@ class Terminal:
 
             self.executa_algoritmo_curvas(escolha)
     
-    def controlador_eventos(self, callback, isPolygon = False):
+    def controlador_eventos(self, callback, isPolygon = False, janela_recorte = []):
         self.running = True
         ponto_selecionado = None
 
@@ -168,6 +170,8 @@ class Terminal:
                     pygame.display.quit()
                     self.running = False
                     return
+                if (evento.type == pygame.KEYUP and evento.key == pygame.K_r):
+                    self.renderizador.recorteSutherlandHogman(janela_recorte)
                 elif evento.type == pygame.MOUSEBUTTONUP:
                     ponto_selecionado = None
                 elif evento.type == pygame.MOUSEMOTION and ponto_selecionado is not None:
@@ -190,7 +194,7 @@ class Terminal:
                 pygame.draw.circle(self.superficie, (0, 0, 255), ponto_controle, 5)
 
             if(isPolygon):
-                pygame.draw.rect(self.superficie, self.cor, pygame.Rect(125, 125, 250, 250), 1)
+                pygame.draw.polygon(self.superficie, self.cor, janela_recorte, 1)
                 
                 if(len(self.renderizador.pontos_controle) > 2):
                     callback()

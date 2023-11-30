@@ -126,7 +126,7 @@ class Terminal:
                 self.configura_janela("Curva de Bezier (Casteljau)", 500, 500)
 
                 self.renderizador = Renderizador(self.superficie, self.cor, 1)
-                self.controlador_eventos(lambda: self.renderizador.curvaCasteljau(30))
+                self.controlador_eventos(lambda: self.renderizador.curvaCasteljau(10))
             case 3:
                 self.configura_janela("Curva de Bezier (Casteljau) com interpolação", 500, 500)
 

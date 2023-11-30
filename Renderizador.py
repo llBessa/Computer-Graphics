@@ -231,7 +231,65 @@ class Renderizador:
         x = (ponto1[0] + ponto2[0])/2
         y = (ponto1[1] + ponto2[1])/2
 
-        return (x, y)
+        return x, y
+    
+    def curvaCasteljau(self, profundidade: int):
+        if(len(self.pontos_controle) == 4):
+            pontos_curva = self.pontos_controle.copy()
+
+            # for i in range(profundidade):
+
+            # for i in range(2):
+            #     novos_pontos = []
+
+            #     for i in range(len(pontos_curva) - 1):
+            #         if(len(pontos_curva) == 1): break
+            #         novos_pontos.append(self.ponto_medio(pontos_curva[i], pontos_curva[i + 1]))
+            #     pontos_curva = novos_pontos.copy()
+                
+            # ponto_medio_curva = self.ponto_medio(pontos_curva[0], pontos_curva[1])
+
+            m01 = self.ponto_medio(pontos_curva[0], pontos_curva[1])
+            m12 = self.ponto_medio(pontos_curva[1], pontos_curva[2])
+            m23 = self.ponto_medio(pontos_curva[2], pontos_curva[3])
+                # m01 = self.ponto_medio(pontos_curva[i], pontos_curva[i+1])
+                # m12 = self.ponto_medio(pontos_curva[i+1], pontos_curva[i+2])
+                # m23 = self.ponto_medio(pontos_curva[i+2], pontos_curva[i+3])
+
+            m012 = self.ponto_medio(m01, m12)
+            m123 = self.ponto_medio(m12, m23)
+
+            ponto_medio_curva = self.ponto_medio(m012, m123)
+
+
+            pontos_curva1 = [pontos_curva[0], m01, m012, ponto_medio_curva]
+            pontos_curva2 = [ponto_medio_curva, m123, m23, pontos_curva[::-1][0]] 
+
+
+            for i in range(profundidade):
+                novos_pontos_curva1 = []
+                novos_pontos_curva2 = []
+
+                novos_pontos_curva1.append(pontos_curva1[0])
+                novos_pontos_curva2.append(pontos_curva2[0])
+                for i in range(len(pontos_curva1) - 1):
+                    novos_pontos_curva1.append(self.ponto_medio(pontos_curva1[i], pontos_curva1[i + 1]))
+                for i in range(len(pontos_curva2) - 1):
+                    novos_pontos_curva2.append(self.ponto_medio(pontos_curva2[i], pontos_curva2[i + 1]))
+
+                novos_pontos_curva1.append(pontos_curva1[::-1][0])
+                novos_pontos_curva2.append(pontos_curva2[::-1][0])
+
+                pontos_curva1 = novos_pontos_curva1.copy()
+                pontos_curva2 = novos_pontos_curva2.copy()
+            
+            pontos_curva = []
+            pontos_curva += pontos_curva1
+            pontos_curva.append(ponto_medio_curva)
+            pontos_curva += pontos_curva2
+            
+            pygame.draw.lines(self.superficie, self.cor, False, pontos_curva)
+
     
     def calcula_intersecao(self, ponto1, ponto2, lado_recorte: int):
         if ponto2[0] - ponto1[0] == 0:
@@ -315,16 +373,3 @@ class Renderizador:
             poligono_recortado = novo_poligono.copy()
         
         self.pontos_controle = poligono_recortado.copy()
-            
-
-
-
-
-
-# def criaFiguraA(cor, superficie, escala):
-#     dda2(Ponto(abs(30*escala), abs(30*escala)), Ponto(abs(60*escala), abs(10*escala)), cor, superficie)
-#     dda2(Ponto(abs(60*escala), abs(10*escala)), Ponto(abs(95*escala), abs(35*escala)), cor, superficie)
-#     dda2(Ponto(abs(95*escala), abs(35*escala)), Ponto(abs(85*escala), abs(45*escala)), cor, superficie)
-#     dda2(Ponto(abs(85*escala), abs(45*escala)), Ponto(abs(35*escala), abs(60*escala)), cor, superficie)
-#     dda2(Ponto(abs(35*escala), abs(60*escala)), Ponto(abs(40*escala), abs(40*escala)), cor, superficie)
-#     dda2(Ponto(abs(40*escala), abs(40*escala)), Ponto(abs(30*escala), abs(30*escala)), cor, superficie)

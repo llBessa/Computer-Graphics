@@ -126,7 +126,12 @@ class Terminal:
                 self.configura_janela("Curva de Bezier (Casteljau)", 500, 500)
 
                 self.renderizador = Renderizador(self.superficie, self.cor, 1)
-                self.controlador_eventos(lambda: self.renderizador.curvaCasteljau(1000))
+                self.controlador_eventos(lambda: self.renderizador.curvaCasteljau(30))
+            case 3:
+                self.configura_janela("Curva de Bezier (Casteljau) com interpolação", 500, 500)
+
+                self.renderizador = Renderizador(self.superficie, self.cor, 1)
+                self.controlador_eventos(lambda: self.renderizador.bezier_subdivision(0.5, 500))
             case _:
                 sys.exit()
     
@@ -154,6 +159,7 @@ class Terminal:
             print("[0] Sair")
             print("[1] Bezier")
             print("[2] Casteljau")
+            # print("[3] Casteljau com interpolação")
             print("\n")
 
             escolha = int(input())
